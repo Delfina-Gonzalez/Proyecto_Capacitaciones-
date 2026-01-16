@@ -18,5 +18,3 @@ Thumbs.db
 
 # --- Procesados (Opcional) ---
 data_processed/*.csv
-data/capacitaciones/*.xlsx
-data/usuarios/*.xlsx
