@@ -1,0 +1,32 @@
+📊 Dashboard de Capacitaciones - Cliente 6382
+Aplicación en Streamlit para el análisis estratégico de formación corporativa, diseñada para procesar reportes de Redash y visualizar KPIs de cumplimiento y aprobación.
+
+📂 Estructura y Datos
+data/: Archivos Excel crudos (Usuarios y Capacitaciones).
+
+data_processed/: Repositorio de históricos en CSV con marca de tiempo.
+
+Inicio.py: Lógica de la aplicación y visualizaciones.
+
+🚀 Instalación y Uso
+Instalar dependencias: pip install -r requirements.txt.
+
+Ejecutar: streamlit run Inicio.py.
+
+Actualización: El botón "Actualizar Datos" procesa nuevos archivos, los limpia (unidecode/normalización) y genera una nueva versión del dataset.
+
+📈 Funcionalidades Clave
+Visión Temporal: Desglose de capacitaciones por Año y Trimestre con gráficos de barras secuenciales.
+
+KPIs de Segmento: Gráficos de torta dinámicos que muestran el % de personal capacitado según los filtros de la barra lateral.
+
+Análisis de Cobertura: Identificación de centros de trabajo con baja participación.
+
+Filtros Dinámicos: Segmentación por Puesto, División, Vicepresidencia y Centro.
+
+💡 Insights
+Pico de actividad detectado en Q1-2024.
+
+Tasa de aprobación superior al 90%.
+
+Foco necesario en sedes con cobertura < 20%.
