@@ -17,7 +17,7 @@ Instalar dependencias: pip install -r requirements.txt.
 
 NOTA: AGREGAR LOS EXCEL EN LAS CARPETAS CORRESPONDIENTES (capacitaciones y usuarios). Se presupone que el cliente no los dispone, se deben subir a la app internamente. En caso de que el Cliente tenga los archivos, se puede agregar un botón de carga en la misma App.
 
-NOTA 2: Los archivos cargados deben respetar los nombres de las columnas de los archivos de ejemplo.
+NOTA 2: Los archivos cargados deben respetar los nombres de las columnas de los archivos de ejemplo. Se presuponen completos, sin datos nulos, erróneos o faltantes como los dataset de ejemplo. En caso de que no sea asi, se debería agregar un proceso de limpieza. 
 
 Ejecutar: streamlit run Inicio.py.
 
