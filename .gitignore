@@ -13,5 +13,7 @@ ENV/
 .DS_Store
 Thumbs.db
 
+.streamlit/
+
 # --- Procesados (Opcional) ---
 data_processed/*.csv
