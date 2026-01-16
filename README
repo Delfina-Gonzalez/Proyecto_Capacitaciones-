@@ -1,7 +1,7 @@
 📊 Dashboard de Capacitaciones - Cliente 6382
 
 # 📊 Dashboard de Capacitaciones
-🚀 **Link a la App:** []
+🚀 **Link de acceso PÚBLICO a la App:** [https://r74untgmt4wsf9qwaqrz2l.streamlit.app/]
 
 Aplicación en Streamlit para el análisis estratégico de formación corporativa, diseñada para procesar reportes de Redash y visualizar KPIs de cumplimiento y aprobación.
 
@@ -16,6 +16,8 @@ Inicio.py: Lógica de la aplicación y visualizaciones.
 Instalar dependencias: pip install -r requirements.txt.
 
 NOTA: AGREGAR LOS EXCEL EN LAS CARPETAS CORRESPONDIENTES (capacitaciones y usuarios). Se presupone que el cliente no los dispone, se deben subir a la app internamente. En caso de que el Cliente tenga los archivos, se puede agregar un botón de carga en la misma App.
+
+NOTA 2: Los archivos cargados deben respetar los nombres de las columnas de los archivos de ejemplo.
 
 Ejecutar: streamlit run Inicio.py.
 
