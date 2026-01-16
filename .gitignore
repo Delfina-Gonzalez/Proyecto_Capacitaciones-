@@ -1,0 +1,22 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv
+venv/
+ENV/
+
+# --- Jupyter Notebooks ---
+.ipynb_checkpoints
+
+# --- Streamlit ---
+.streamlit/
+
+# --- Sistema ---
+.DS_Store
+Thumbs.db
+
+# --- Procesados (Opcional) ---
+data_processed/*.csv
+data/capacitaciones/*.xlsx
+data/usuarios/*.xlsx
