@@ -189,7 +189,7 @@ mostrar_seccion_global = all([
     ])
 if mostrar_seccion_global:
 
-    st.markdown("## 🌎 Visión Global por Centro y Área")
+    st.markdown("## 🌎 Visión Global")
     st.markdown(
         "Esta sección se muestra cuando **no hay filtros aplicados**")
 
