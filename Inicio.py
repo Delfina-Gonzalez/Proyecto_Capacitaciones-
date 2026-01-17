@@ -2,7 +2,6 @@ import streamlit as st
 from pathlib import Path
 import pandas as pd
 from config import PROCESSED_DIR, DATA_DIR
-import openpyxl 
 import unidecode
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -287,7 +286,7 @@ if mostrar_seccion_global:
     plt.clf()
 
 # -------------------- CAPACITACIONES POR AÑO Y TRIMESTRE --------------------
-    st.markdown("### 📅 Capcitaciones contratadas por Año y Trimestre")
+    st.markdown("### 📅 Capacitaciones contratadas por Año y Trimestre")
 
     # Aseguramos que los valores sean enteros y manejamos posibles nulos con .fillna(0)
     df_filtrado['Año'] = df_filtrado['Fecha'].dt.year.fillna(0).astype(int)

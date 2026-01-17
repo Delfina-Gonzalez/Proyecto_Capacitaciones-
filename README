@@ -1,4 +1,4 @@
-📊 Dashboard de Capacitaciones - Cliente 6382
+📊 Dashboard de Capacitaciones 
 
 # 📊 Dashboard de Capacitaciones
 🚀 **Link de acceso PÚBLICO a la App:** [https://r74untgmt4wsf9qwaqrz2l.streamlit.app/]
@@ -8,33 +8,32 @@ Aplicación en Streamlit para el análisis estratégico de formación corporativ
 📂 Estructura y Datos
 data/: Archivos Excel crudos (Usuarios y Capacitaciones).
 
-data_processed/: Repositorio de históricos en CSV con marca de tiempo.
+data_processed/: Repositorio de históricos.
 
 Inicio.py: Lógica de la aplicación y visualizaciones.
 
+consigna: Notebook con las respuestas a las preguntas compartidas.
+
+config: definición de rutas.
+
 🚀 Instalación y Uso
 Instalar dependencias: pip install -r requirements.txt.
+Ejecutar: streamlit run Inicio.py. o ingresar por el LINK de la App.
 
-NOTA: AGREGAR LOS EXCEL EN LAS CARPETAS CORRESPONDIENTES (capacitaciones y usuarios). Se presupone que el cliente no los dispone, se deben subir a la app internamente. En caso de que el Cliente tenga los archivos, se puede agregar un botón de carga en la misma App.
+Consideraciones/Requisitos:
 
-NOTA 2: Los archivos cargados deben respetar los nombres de las columnas de los archivos de ejemplo. Se presuponen completos, sin datos nulos, erróneos o faltantes como los dataset de ejemplo. En caso de que no sea asi, se debería agregar un proceso de limpieza. 
+NOTA: AGREGAR LOS EXCEL EN LAS CARPETAS CORRESPONDIENTES (capacitaciones y usuarios). 
+Se presupone que el cliente no los dispone, se deben subir a la app internamente. En caso de que el Cliente tenga los archivos, se puede agregar un botón de carga en la misma App.
 
-Ejecutar: streamlit run Inicio.py.
+NOTA 2: Los archivos cargados deben respetar los nombres de las columnas de los archivos de ejemplo. Se presuponen completos, sin datos nulos, erróneos o faltantes como los dataset de ejemplo. 
+En caso de que no sea asi, se debería agregar un proceso de limpieza. 
 
-Actualización: El botón "Actualizar Datos" de la App se procesan nuevos archivos previamente cargados en las carpetas corresponientes, los limpia (unidecode/normalización) y genera una nueva versión del dataset. Recordar eliminar los excel anteriores si solo se quiere procesar el último. 
+NOTA 3: El botón "Actualizar Datos" de la App se procesan nuevos archivos previamente cargados en las carpetas corresponientes, los limpia (unidecode/normalización) y genera una nueva versión del dataset. 
+Recordar eliminar los excel anteriores si solo se quiere procesar el último. 
 
-📈 Funcionalidades Clave
-Visión Temporal: Desglose de capacitaciones por Año y Trimestre con gráficos de barras secuenciales.
+💡 Propuesta de mejoras para una próxima versión:
+- Mejorar el proceso de extracción y limpieza, para que sea más flexible y asegurar que no se generen errores en los procesamientos posteriores. 
+- Reordenar y modularizar las funciones/página de la App, mayor escalabilidad y por sobre todo legibilidad.
+- Modificar la sección global con un selector que permita ver los datos y gráficos principales según Año-Q1, Q2...etc.
+- Mejorar el proceso de guardado del archivo histórico, para que no se duplique el mismo si el cliente ejecuta el botón sin haber modificado en realidad el dataset. Se podría implementar un control por fecha/datetime.
 
-KPIs de Segmento: Gráficos de torta dinámicos que muestran el % de personal capacitado según los filtros de la barra lateral.
-
-Análisis de Cobertura: Identificación de centros de trabajo con baja participación.
-
-Filtros Dinámicos: Segmentación por Puesto, División, Vicepresidencia y Centro.
-
-💡 Insights
-Pico de actividad detectado en Q1-2024.
-
-Tasa de aprobación superior al 90%.
-
-Foco necesario en sedes con cobertura < 20%.
