@@ -104,20 +104,12 @@ def cargar_y_procesar():
     df_capacitaciones = cargar_datos("capacitaciones")
     df_final = procesar_datos(df_usuarios, df_capacitaciones)
 
-   # Fecha actual para historico
-    fecha_str = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-    # Nombre del archivo con fecha
-    archivo_historico = PROCESSED_DIR / f"capacitaciones_procesadas_{fecha_str}.csv"
-
-    df_final.to_csv(archivo_historico, index=False)
-
     return df_final
 
 #------------------------------------------------------
 # Lógica de persistencia de datos
 def obtener_ultimo_procesado():
-    archivos = list(PROCESSED_DIR.glob("capacitaciones_procesadas_*.csv"))
+    archivos = list(PROCESSED_DIR.glob("*.csv"))
     if not archivos:
         return None
     # Retorna el archivo más reciente basado en el nombre
@@ -127,6 +119,13 @@ def obtener_ultimo_procesado():
 if st.button("🔄 Actualizar Datos"):
     st.info("Cargando y procesando nuevos archivos...")
     df_final = cargar_y_procesar()
+
+    # Fecha actual para historico
+    fecha_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # Nombre del archivo con fecha
+    archivo_historico = PROCESSED_DIR / f"capacitaciones_procesadas_{fecha_str}.csv"
+    df_final.to_csv(archivo_historico, index=False)
+
     st.success("✅ Datos actualizados correctamente!")
 else:
     ultimo_archivo = obtener_ultimo_procesado()
@@ -137,8 +136,9 @@ else:
         if 'Fecha' in df_final.columns:
             df_final['Fecha'] = pd.to_datetime(df_final['Fecha'])
     else:
-        st.info("Cargando datos por primera vez...")
+        st.info("Cargando y procesando archivos...")
         df_final = cargar_y_procesar()
+        
         st.success("✅ Datos cargados correctamente!")
 
 #------------------------------------------------------------------------------------------------------------
