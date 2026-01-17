@@ -98,9 +98,7 @@ def procesar_datos(df_usuarios, df_capacitaciones):
     return df_final
 
 #------------------------------------------------------------------------------------------------------------
-# Función para cargar y procesar datos (llamada al inicio o al actualizar)
-@st.cache_data(show_spinner=False)
-
+# Lógica de carga y procesamiento
 def cargar_y_procesar():
     df_usuarios = cargar_datos("usuarios")
     df_capacitaciones = cargar_datos("capacitaciones")
@@ -122,7 +120,7 @@ def obtener_ultimo_procesado():
     archivos = list(PROCESSED_DIR.glob("capacitaciones_procesadas_*.csv"))
     if not archivos:
         return None
-    # Retorna el archivo más reciente basado en el nombre (gracias al formato YYYYMMDD_HHMMSS)
+    # Retorna el archivo más reciente basado en el nombre
     return max(archivos, key=lambda x: x.name)
 
 # Botón para forzar actualización
@@ -194,10 +192,7 @@ if mostrar_seccion_global:
 
     st.markdown("## 🌎 Visión Global por Centro y Área")
     st.markdown(
-        "Esta sección se muestra cuando **no hay filtros aplicados**, "
-        "permitiendo comparar centros de trabajo y ver participación por área y centro."
-    )
-
+        "Esta sección se muestra cuando **no hay filtros aplicados**")
 
     # -------------------- RESUMEN GENERAL --------------------
     # Total de empleados únicos según filtros
@@ -253,7 +248,7 @@ if mostrar_seccion_global:
 
         labels = usuarios_estado.index.tolist()
         sizes = usuarios_estado.values
-        colors = ['#8CCFE0', '#FF6347']  # azul y rojo tomate
+        colors = ['#8CCFE0', '#FF6347'] 
 
         plt.figure(figsize=(4,4))
         wedges, texts, autotexts = plt.pie(
@@ -292,19 +287,17 @@ if mostrar_seccion_global:
     plt.clf()
 
 # -------------------- CAPACITACIONES POR AÑO Y TRIMESTRE --------------------
-    st.markdown("### 📅 Capacitaciones por Año y Trimestre")
+    st.markdown("### 📅 Capcitaciones contratadas por Año y Trimestre")
 
     # Aseguramos que los valores sean enteros y manejamos posibles nulos con .fillna(0)
     df_filtrado['Año'] = df_filtrado['Fecha'].dt.year.fillna(0).astype(int)
     df_filtrado['Trimestre'] = df_filtrado['Fecha'].dt.quarter.fillna(0).astype(int)
 
-    # Agrupamos y quitamos los registros donde el año es 0 (fechas inválidas)
     cap_periodo = (
         df_filtrado[df_filtrado['Año'] > 0]
-        .groupby(['Año', 'Trimestre'])
+        .groupby(['Año', 'Trimestre']) 
         .size()
-        .reset_index(name='Cantidad')
-    )
+        .reset_index(name='Cantidad'))
 
     # Formateamos el texto sin puntos decimales
     cap_periodo['Periodo'] = (
@@ -351,7 +344,8 @@ if mostrar_seccion_global:
     )
 
     # -------------------- TOP CENTROS CON MENOR PARTICIPACIÓN --------------------
-    st.markdown("## Centros con Menor Participación en Capacitaciones")
+    st.markdown("### Centros con Menor Participación en Capacitaciones (descargable)")
+    st.markdown("Se estima los centros con 15/20% por debajo de la media de cobertura.")
 
     # Base única de empleados por centro
     base_empleados = df_filtrado[['ID Usuario', 'Centro de Trabajo']].drop_duplicates()
@@ -391,6 +385,14 @@ if mostrar_seccion_global:
     # Mostrar tabla ajustada al ancho de la página
     st.table(top_menor_display)
 
+    # Descargar CSV
+    st.download_button(
+        label="⬇️ Descargar listado completo de centros",
+        data=centros_participacion.to_csv(index=False, encoding="utf-8-sig"),
+        file_name="centros_participacion_capacitaciones.csv",
+        mime="text/csv"
+    )
+
 #----------------------------------------------------------------------------------------------------------------------
 
 else:  
@@ -406,74 +408,126 @@ else:
 
     total_empleados = df_filtrado['ID Usuario'].nunique()
 
-    # --- Resumen Visual del Segmento ---
-    col_torta, col_info = st.columns([1, 1])
+    if total_empleados == 0:
+        st.warning("⚠️ No hay empleados en la segmentación seleccionada. Ajusta los filtros para ver resultados.")
+        st.stop()
+    else:
+        # --- Resumen Visual del Segmento ---
+        col_torta, col_info = st.columns([1, 1])
 
-    con_cap = df_filtrado[df_filtrado['Capacitado'] == True]['ID Usuario'].nunique()
-    sin_cap = total_empleados - con_cap
+        con_cap = df_filtrado[df_filtrado['Capacitado'] == True]['ID Usuario'].nunique()
+        sin_cap = total_empleados - con_cap
 
-    with col_torta:
-        fig, ax = plt.subplots(figsize=(4, 4))
-        ax.pie(
-            [con_cap, sin_cap], 
-            labels=['Con capacitación', 'Sin capacitación'], 
-            autopct='%1.1f%%', 
-            startangle=90, 
-            colors=['#FF8C00', '#FFCC99'],
-            textprops={'weight':'bold', 'fontsize':10}
+        with col_torta:
+            fig, ax = plt.subplots(figsize=(4, 4))
+            ax.pie(
+                [con_cap, sin_cap], 
+                labels=['Con capacitación', 'Sin capacitación'], 
+                autopct='%1.1f%%', 
+                startangle=90, 
+                colors=['#FF8C00', '#FFCC99'],
+                textprops={'weight':'bold', 'fontsize':10}
+            )
+            ax.axis('equal')
+            st.pyplot(fig)
+            plt.clf()
+
+        with col_info:
+            st.metric("Total Empleados", f"{total_empleados:,}")
+            st.write(f"✅ **Con capacitación:** {con_cap:,}")
+            st.write(f"⏳ **Sin capacitación:** {sin_cap:,}")
+
+        st.divider() # Separador visual antes de los detalles por Training
+
+        # -------------------- CONTAR POR CAPACITACIÓN Y ESTADO --------------------
+
+        st.markdown(f"### 📊 Resultados de las Capacitaciones por Training")
+        # Solo usamos df_filtrado; Capacitado es booleano
+        estado_df = (
+            df_filtrado
+            .groupby(['Capacitación', 'Estado'])['ID Usuario']
+            .nunique()
+            .unstack(fill_value=0)
         )
-        ax.axis('equal')
-        st.pyplot(fig)
-        plt.clf()
 
-    with col_info:
-        st.metric("Total Empleados", f"{total_empleados:,}")
-        st.write(f"✅ **Con capacitación:** {con_cap:,}")
-        st.write(f"⏳ **Sin capacitación:** {sin_cap:,}")
+        # Ordenar por total de usuarios
+        if not estado_df.empty:
+            estado_df = estado_df.loc[estado_df.sum(axis=1).sort_values(ascending=False).index]
 
-    st.divider() # Separador visual antes de los detalles por Training
+        # Colores para cada estado
+        colores = {
+            "Pendiente": "#FFA07A",  # naranja claro
+            "Aprobado": "#FF8C00",   # naranja fuerte
+            "Reprobado": "#FF6347"   # rojo tomate
+        }
+        colores_lista = [colores.get(x, "#999999") for x in estado_df.columns]
 
-    # -------------------- CONTAR POR CAPACITACIÓN Y ESTADO --------------------
+        # Mostrar tabla
+        st.dataframe(estado_df)
 
-    st.markdown(f"### 📊 Resultados de las Capacitaciones por Training")
-    # Solo usamos df_filtrado; Capacitado es booleano
-    estado_df = (
-        df_filtrado
-        .groupby(['Capacitación', 'Estado'])['ID Usuario']
-        .nunique()
-        .unstack(fill_value=0)
+        st.markdown(f"### Colaboradores más activos en {filtro_centro_trabajo}")
+
+        columnas_perfil = [
+            "ID Usuario", "Usuario", "Puesto", "Categoria", "Division"
+        ]
+
+        # Agrupar por perfil para no perder datos en la descarga
+        conteo_activos = (
+            df_filtrado.groupby(columnas_perfil, as_index=False)["Capacitado"]
+            .sum()
+            .rename(columns={"Capacitado": "Total Capacitaciones"})
+            .sort_values("Total Capacitaciones", ascending=False)
+        )
+
+        # Vista previa
+        st.dataframe(conteo_activos.head(5), use_container_width=True)
+
+        # Descarga
+        st.download_button(
+            label="Descargar listado completo",
+            data=conteo_activos.to_csv(index=False, encoding="utf-8-sig"),
+            file_name=f"actividad_{filtro_centro_trabajo}.csv",
+            mime="text/csv"
     )
 
-    # Ordenar por total de usuarios
-    if not estado_df.empty:
-        estado_df = estado_df.loc[estado_df.sum(axis=1).sort_values(ascending=False).index]
+        # -------------------- EMPLEADOS SIN CAPACITACIÓN 
+        st.markdown(f"### Empleados sin capacitación en {filtro_centro_trabajo} (descargable)")
 
-    # Colores para cada estado
-    colores = {
-        "Pendiente": "#FFA07A",  # naranja claro
-        "Aprobado": "#FF8C00",   # naranja fuerte
-        "Reprobado": "#FF6347"   # rojo tomate
-    }
-    colores_lista = [colores.get(x, "#999999") for x in estado_df.columns]
+        df_sin_cap = df_filtrado.copy()
 
-    # Mostrar tabla
-    st.dataframe(estado_df)
+        # Filtrar solo NO capacitados
+        df_sin_cap = df_sin_cap[df_sin_cap["Capacitado"] == False]
 
-    # -------------------- COLABORADORES MÁS ACTIVOS --------------------
-    st.markdown("### 👥 Colaboradores más activos")
-    conteo_usuarios = (
-        df_filtrado.groupby('Usuario')['Capacitado']
-        .sum()
-        .reset_index(name='Cantidad de Capacitaciones Tomadas')
-        .sort_values('Cantidad de Capacitaciones Tomadas', ascending=False)
-    )
-    st.table(conteo_usuarios.head(10).style.set_properties(**{'text-align': 'center'}))
+        # Columnas a exportar
+        columnas_exportar = [
+            "ID Usuario",
+            "Usuario",
+            "Puesto",
+            "Categoria",
+            "Vicepresidencia",
+            "Division",
+            "Marca / Area",
+            "Centro de Trabajo"
+        ]
 
-    # -------------------- TABLA DE RESULTADOS --------------------
-    st.markdown("#### Detalle de resultados:")
-    st.dataframe(
-        df_filtrado[[
-            "ID Usuario", "Usuario", "Fecha", "Capacitación", "Estado", "Capacitado"
-        ]],
-        use_container_width=True
-    )
+        df_descarga_sin_cap = df_sin_cap[columnas_exportar].drop_duplicates()
+
+        st.dataframe(df_descarga_sin_cap, use_container_width=True)
+
+        # Descarga
+        st.download_button(
+            label="⬇️ Descargar empleados sin capacitación",
+            data=df_descarga_sin_cap.to_csv(index=False, encoding="utf-8-sig"),
+            file_name=f"empleados_sin_capacitacion_{filtro_centro_trabajo}.csv",
+            mime="text/csv"
+        )
+
+        # -------------------- TABLA DE RESULTADOS --------------------
+        st.markdown("### Detalle de todos los resultados:")
+        st.dataframe(
+            df_filtrado[[
+                "ID Usuario", "Usuario", "Fecha", "Capacitación", "Estado", "Capacitado"
+            ]].sort_values("ID Usuario"),
+            use_container_width=True
+        )
+
